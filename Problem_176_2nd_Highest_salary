@@ -1,0 +1,8 @@
+Select max(salary) as SecondHighestSalary
+From employee e1
+Where 1 = 
+(
+Select count(distinct salary
+From employee e2
+Where e2.salary > e1.salary
+)
