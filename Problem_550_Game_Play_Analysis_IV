@@ -1,0 +1,15 @@
+SELECT
+    ROUND(
+        COUNT(DISTINCT a.player_id) * 1.0 /
+        COUNT(DISTINCT b.player_id),
+        2
+    ) AS fraction
+FROM Activity b
+LEFT JOIN Activity a
+    ON a.player_id = b.player_id
+    AND a.event_date = DATEADD(DAY, 1, b.event_date)
+WHERE b.event_date = (
+    SELECT MIN(event_date)
+    FROM Activity
+    WHERE player_id = b.player_id
+);
