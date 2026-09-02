@@ -1,0 +1,25 @@
+WITH cte AS (
+    SELECT 
+        visited_on,
+        SUM(amount) OVER (
+            ORDER BY visited_on 
+            ROWS BETWEEN 6 PRECEDING AND CURRENT ROW
+        ) AS amount,
+        COUNT(*) OVER (
+            ORDER BY visited_on 
+            ROWS BETWEEN 6 PRECEDING AND CURRENT ROW
+        ) AS cnt,
+        ROW_NUMBER() OVER (ORDER BY visited_on) AS rn
+    FROM (
+        SELECT visited_on, SUM(amount) AS amount
+        FROM Customer
+        GROUP BY visited_on
+    ) t
+)
+SELECT 
+    visited_on,
+    amount,
+    ROUND(amount / 7.0, 2) AS average_amount
+FROM cte
+WHERE rn >= 7
+ORDER BY visited_on;
